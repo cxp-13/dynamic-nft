@@ -228,7 +228,7 @@ contract Models is
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
 
-        // Will revert if subscription is not set and funded.
+        // 如果订阅没有设置和资金，将恢复。
         requestId = COORDINATOR.requestRandomWords(
             keyHash,
             s_subscriptionId,
@@ -236,37 +236,38 @@ contract Models is
             callbackGasLimit,
             numWords
         );
-        // don't put _safeMint function in fulfillRandomWords,it'll cost more gas than the callbackGasLimit you configured
+        // 不要在fulfillRandomWords中放入_safeMint函数，它将比您配置的callbackGasLimit花费更多的汽油
         _safeMint(msg.sender, tokenId);
         resToToken[requestId] = tokenId;
         emit MintRequest(requestId);
     }
 
+    // VRF 的回调函数
     function fulfillRandomWords(
         uint256 _requestId,
         uint256[] memory _randomWords
     ) internal override {
-        // obtain a mode value
+        // 获取当前模式
         uint256 modeValue = (_randomWords[0] % lengthOfMetaData);
         uint tokenId = resToToken[_requestId];
         tokenIdtoModeValue[tokenId] = modeValue;
-
-        // According to the metadata configured above,use the index 0 of the pic array as default pic
+        // 根据上面配置的元数据，使用暖和作为默认天气
         _setTokenURI(tokenId, allMetaData[modeValue][uint8(DegreeState.Warm)]);
         emit MintSuccess(_requestId);
     }
 
+    // 根据温度改变当前的温度等级
     function changeERTStatus(int256 _degree) public {
-        // Compare the discrepancy between new degree and current degree
+        // 比较新温度和当前温度之间的差异
         if (_degree != currentDegree) {
-            // if there has the discrepancy then change the lastest degree to currentDegree
+            // 如果有差异，则将最新温度更改为当前温度
             currentDegree = _degree;
-            // Compare the degreelevel between new degree and current degree
+            // 比较新温度和当前温度等级之间的等级
             DegreeState newDegreeLevel = checkWheatherLevel(_degree);
             if (newDegreeLevel != currentDegreeLevel) {
-                // // if there has the discrepancy then change the lastest degree level to current degree level
+                // 如果有差异，则将最新温度等级更改为当前温度等级
                 currentDegreeLevel = newDegreeLevel;
-                // update the metadata of ERCs
+                // 更新 ERC 的元数据
                 uint totalSupply = totalSupply();
                 for (uint i = 0; i < totalSupply; i++) {
                     // i == tokenId
@@ -280,13 +281,10 @@ contract Models is
         }
     }
 
+    // 根据温度判断当前等级
     function checkWheatherLevel(
         int256 _degree
     ) private pure returns (DegreeState) {
-        //    Warm, // 15< x > 30
-        // Hot, // 30 <= x
-        // Cool, // 5 < x >= 15
-        // Cold // x <=5
         if (_degree >= 30 * 100) {
             return DegreeState.Hot;
         } else if (_degree > 15 * 100) {
@@ -298,6 +296,7 @@ contract Models is
         }
     }
 
+    // 取出存在该合约的全部钱
     function withdraw() public payable onlyOwner {
         (bool success, ) = payable(msg.sender).call{
             value: address(this).balance
@@ -307,17 +306,17 @@ contract Models is
         }
     }
 
+    // 获取当前温度
     function getCurrentDegree() public view returns (int256) {
         return currentDegree;
     }
 
-    // The following functions are overrides required by Solidity.
     function _update(
         address to,
         uint256 tokenId,
         address auth
     ) internal override(ERC721, ERC721Enumerable) returns (address) {
-        super._update(to, tokenId, auth);
+        return super._update(to, tokenId, auth);
     }
 
     function _increaseBalance(
@@ -326,12 +325,6 @@ contract Models is
     ) internal override(ERC721, ERC721Enumerable) {
         super._increaseBalance(account, value);
     }
-
-    // function _burn(
-    //     uint256 tokenId
-    // ) internal override(ERC721, ERC721URIStorage) {
-    //     super._burn(tokenId);
-    // }
 
     function tokenURI(
         uint256 tokenId
