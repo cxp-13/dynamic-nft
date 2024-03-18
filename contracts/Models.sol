@@ -283,7 +283,7 @@ contract Models is
 
     // 根据温度判断当前等级
     function checkWheatherLevel(
-        int256 _degree
+        int256 _degree // 10.9 摄氏度会返回1090
     ) private pure returns (DegreeState) {
         if (_degree >= 30 * 100) {
             return DegreeState.Hot;

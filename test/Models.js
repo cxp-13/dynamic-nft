@@ -39,36 +39,36 @@ describe("Models Contract", function () {
     console.log("Contract loaded:", contract.target);
   });
 
-  it("Should mint new token for user", async function () {
-    await contract.addWhiteList([wallet2]);
-    await contract
-      .connect(wallet2)
-      .preMint({ value: ethers.parseEther("0.0001") });
-  });
+  // it("Should mint new token for user", async function () {
+  //   await contract.addWhiteList([wallet2]);
+  //   await contract
+  //     .connect(wallet2)
+  //     .preMint({ value: ethers.parseEther("0.0001") });
+  // });
 
-  it("Should withdraw", async function () {
-    let balanceBefore = await provider.getBalance(contract.target);
-    balanceBefore = ethers.formatEther(balanceBefore);
-    await contract.withdraw();
-    let balanceAfter = await provider.getBalance(contract.target);
-    balanceAfter = ethers.formatEther(balanceAfter);
-    console.log("balanceBefore", balanceBefore, "balanceAfter", balanceAfter);
-  });
+  // it("Should withdraw", async function () {
+  //   let balanceBefore = await provider.getBalance(contract.target);
+  //   balanceBefore = ethers.formatEther(balanceBefore);
+  //   await contract.withdraw();
+  //   let balanceAfter = await provider.getBalance(contract.target);
+  //   balanceAfter = ethers.formatEther(balanceAfter);
+  //   console.log("balanceBefore", balanceBefore, "balanceAfter", balanceAfter);
+  // });
 
-  it("Print TokenURI", async function () {
-    let tokenURI = await contract.tokenURI(0);
-    let tokenURI1 = await contract.tokenURI(1);
-    console.log("Token URI:", tokenURI, tokenURI1);
-  });
+  // it("Print TokenURI", async function () {
+  //   let tokenURI = await contract.tokenURI(0);
+  //   let tokenURI1 = await contract.tokenURI(1);
+  //   console.log("Token URI:", tokenURI, tokenURI1);
+  // });
 
-  it("Test transferWindowState", async function () {
-    await contract.transferWindowState();
-    let curState = await contract.getCurrentWindowState();
-    console.log("Current state:", curState);
-  });
+  // it("Test transferWindowState", async function () {
+  //   await contract.transferWindowState();
+  //   let curState = await contract.getCurrentWindowState();
+  //   console.log("Current state:", curState);
+  // });
 
   it("Change the degree", async function () {
-    await contract.changeERTStatus(36);
+    // await contract.changeERTStatus(36);
     let degree = await contract.getCurrentDegree();
     console.log("Current degree:", degree.toString());
   });

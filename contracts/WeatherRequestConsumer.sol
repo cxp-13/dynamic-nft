@@ -26,30 +26,28 @@ contract WeatherRequestConsumer is ChainlinkClient, ConfirmedOwner {
         _;
     }
 
-    event ReceivedFulfillWeather();
+    event RquestWeather(bytes32 requestId);
+    event ReceivedFulfillWeather(bytes32 requestId, int256 degree);
 
-    /**
-     *  Sepolia
-     *@dev LINK address in Sepolia network: 0x779877A7B0D9E8603169DdbD7836e478b4624789
-     * @dev Check https://docs.chain.link/docs/link-token-contracts/ for LINK address for the right network
-     */
     /**
      * @param _jobId   this id is jobId of job running on your chainlink node
      * @param _oracle  this is the operationAddress
      */
     constructor(
-        string memory _jobId,
-        address _oracle,
-        address linkAddress,
+        string memory _jobId, //fcf4140d696d44b687012232948bdd5d get请求并且返回类型为int256
+        address _oracle, //Ethereum Sepolia	0x6090149792dAAeE9D1D568c9f9a6F6B46AA29eFD
+        address linkAddress, // Sepolia network: 0x779877A7B0D9E8603169DdbD7836e478b4624789
         address modelesAddress
     ) ConfirmedOwner(msg.sender) {
         modeles = Models(modelesAddress);
         jobId = _jobId;
         operationAddress = _oracle;
         setChainlinkToken(linkAddress);
+        setChainlinkOracle(operationAddress);
         authenticatedUser[msg.sender] = true;
     }
 
+    // 发起请求获取天气温度
     function requestCurrentWeather() public AuthenticatedUser {
         Chainlink.Request memory req = buildChainlinkRequest(
             stringToBytes32(jobId),
@@ -59,24 +57,25 @@ contract WeatherRequestConsumer is ChainlinkClient, ConfirmedOwner {
         req.add("get", wheatherUrl);
         req.add("path", "current_weather,temperature");
         req.addInt("times", 100);
-        sendChainlinkRequestTo(operationAddress, req, ORACLE_PAYMENT);
+        bytes32 requestId = sendChainlinkRequestTo(
+            operationAddress,
+            req,
+            ORACLE_PAYMENT
+        );
+        emit RquestWeather(requestId);
     }
 
+    // 温度的回调
     function fulfillWeather(
         bytes32 _requestId,
         int256 _degree
     ) public recordChainlinkFulfillment(_requestId) {
-        // currentDegree = degree;
         modeles.changeERTStatus(_degree);
-        emit ReceivedFulfillWeather();
+        emit ReceivedFulfillWeather(_requestId, _degree);
     }
 
     function addRequestedPromision(address _user) public onlyOwner {
         authenticatedUser[_user] = true;
-    }
-
-    function getChainlinkToken() public view returns (address) {
-        return chainlinkTokenAddress();
     }
 
     function withdrawLink() public onlyOwner {
