@@ -12,12 +12,16 @@
 基本架构图：
 ![image](https://github.com/cxp-13/dynamic-nft/assets/84974164/939f229f-429b-4804-9954-44325fd915fe)
 
-流程：
+获取随机数流程：
 1. 主要由ChainlinkClient组成
-2. 构建请求buildChainlinkRequest
-3. 向节点发送get请求sendChainlinkRequestTo
-4. 节点回调fulfillWeather函数，返回天气温度
-5. 调用Model合约的changeERTStatus函数改变温度
+2. 初始化VRFCoordinatorV2Interface
+3. 使用requestRandomWords函数发起请求
+4. 在回调函数fulfillRandomWords中获取随机数并使用
+获取温度流程：
+1. 构建请求buildChainlinkRequest
+2. 向节点发送get请求sendChainlinkRequestTo
+3. 节点回调fulfillWeather函数，返回天气温度
+4. 调用Model合约的changeERTStatus函数改变温度
 # Sample Hardhat Project
 
 This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a Hardhat Ignition module that deploys that contract.
