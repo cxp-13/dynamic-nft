@@ -17,6 +17,7 @@
 2. 初始化VRFCoordinatorV2Interface
 3. 使用requestRandomWords函数发起请求
 4. 在回调函数fulfillRandomWords中获取随机数并使用
+
 获取温度流程：
 1. 构建请求buildChainlinkRequest
 2. 向节点发送get请求sendChainlinkRequestTo
