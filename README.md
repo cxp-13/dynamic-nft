@@ -32,6 +32,7 @@ WeatherRequestConsumer合约的主要功能如下：
 5.  安全性保障：合约采取了权限控制和事件通知等措施，提高了合约的安全性和稳定性，防止未授权的操作和异常情况对合约造成损害。 
 6.  链下服务配置：合约在部署时需要配置链下服务的相关参数，包括链下API的地址、Chainlink节点的地址等。 
 ### 基本架构图：
+![image](https://github.com/cxp-13/dynamic-nft/assets/84974164/02832a3a-d528-4c16-ab49-51b2a21e1937)
 ![image](https://github.com/cxp-13/dynamic-nft/assets/84974164/939f229f-429b-4804-9954-44325fd915fe)
 获取温度流程：
 1. 构建请求buildChainlinkRequest
